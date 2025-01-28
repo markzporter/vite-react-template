@@ -2,13 +2,29 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.tsx'
 import './index.css'
-import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
+import { ApolloClient, InMemoryCache, ApolloProvider, HttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
 
 
-const client = new ApolloClient({
-    uri: 'https://flyby-router-demo.herokuapp.com/',
-    cache: new InMemoryCache(),
-});
+
+const link = new HttpLink({ uri: 'https://backboard.railway.com/graphql/v2', });
+
+
+
+const setAuthorizationLink = setContext((request, previousContext) => ({
+    headers: {
+      ...previousContext.headers,
+      authorization: `Bearer ${ localStorage.getItem('auth_token') }`
+    }}));
+ 
+
+
+  const client = new ApolloClient({
+    link: setAuthorizationLink.concat(link),
+    cache: new InMemoryCache()
+  });
+
+
 
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
