@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
-import { useQuery, gql } from '@apollo/client';
+import { useLazyQuery, gql } from '@apollo/client';
 import { useApolloClient } from '@apollo/client'
 
 import './App.css'
@@ -30,42 +30,48 @@ const GET_APPS = gql`
 
 function DisplayProjects(token: string) {
 
-    const { loading, error, data } = useQuery(GET_APPS);
+    const [
+        getApps,
+        { loading, data }
+    ] = useLazyQuery(GET_APPS);
 
 
 
     if (loading) return <p>Loading...</p>;
 
-    if (error) return <p>Error : {error.message}</p>
 
     console.log(token);
     console.log(data);
 
     return (
-  
+
         <div >
             <p>
                 HEYYY
             </p>
-    
+
+            <div>
+                <button onClick={x => getApps()}>
+                    HEY!!
+                </button>
+            </div>
         </div>
-    
-      );
+
+    );
 
 }
 
 
 
 
-
 function App() {
- 
+
 
 
 
 
     const [count, setCount] = useState(0)
-    const [token, setToken] =  useState('')
+    const [token, setToken] = useState('')
 
 
     const onTokenChange = (token: string) => {
@@ -95,7 +101,7 @@ function App() {
             <p className="read-the-docs">
                 Click on the Vite and React logos to learn more
             </p>
-            <DisplayProjects/>
+            <DisplayProjects />
             <input
                 type="text"
                 onChange={(x) => onTokenChange(x.target.value)}
